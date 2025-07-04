@@ -7,7 +7,7 @@ export class MessageService {
     constructor(private readonly producerService:KafkaProducerService){}
 
     sendMessage(body){
-            this.producerService.produceMessage("PUNCH",[{"punchType":"BIOMETRIC","punchTime":"2025-06-06 18:00:00"}])
+            this.producerService.produceMessage("PUNCH",[{"punchType":"BIOMETRIC","punchTime":"2025-0c6-06 18:00:00"}])
         
     }
 }
