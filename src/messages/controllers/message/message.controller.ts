@@ -8,8 +8,8 @@ export class MessageController {
     constructor(private readonly producerService:KafkaProducerService,private readonly messageService:MessageService){}
 
 
-    @Post('trails')
+    @Post('publishMessages')
     async sendMessage(@Body() body){
-        this.messageService.sendMessage()
+        this.messageService.sendMessage(body)
     }
 }

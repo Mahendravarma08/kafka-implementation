@@ -7,10 +7,10 @@ export class sampleConsumerService extends KafkaConsumerService {
   constructor() {
     // Pass specific topic and groupId to the base service
     super(
-      'my-app',                          // clientId
+      'punch-consumer',                          // clientId
       ['localhost:9092'],                 // brokers
-      kafkaTopics.topic_1.groupId,   // groupId from config
-      kafkaTopics.topic_1.topic     // topic from config
+      "Punch-Consumer_group",   // groupId from config
+      "PUNCH"     // topic from config
     );
   }
 

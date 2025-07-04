@@ -1,17 +1,23 @@
 // src/kafka/kafka.producer.ts
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { Kafka } from 'kafkajs';
-import { kafkaTopics } from './kafka-topics.config';
+import { CompressionTypes, Kafka, logLevel } from 'kafkajs';
 
 @Injectable()
 export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   private kafka = new Kafka({
-    clientId: 'my-app',
+    clientId: 'singleTopic-Multiple-partitions',
     brokers: ['localhost:9092'],
-    
+    logLevel: logLevel.ERROR,
   });
 
-  private producer = this.kafka.producer();
+  private producer = this.kafka.producer({
+    allowAutoTopicCreation: false,
+    idempotent:true,
+    maxInFlightRequests:5,
+    retry:{
+      retries:2
+    }
+  });
 
   async onModuleInit() {
     try {
@@ -22,18 +28,25 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async produceMessage(topicKey: string, message: string) {
+  async produceMessage(topicKey: string, data: any[]) {
     try {
+      const messages = data.map((data)=>({
+        key: data.id?.toString() || null,
+        value: JSON.stringify(data.message)
+      }))
+
+      console.log(messages)
+
       const result = await this.producer.send({
         topic:topicKey,
-        messages: [{ value: message }],
+        messages:messages,
+        compression: CompressionTypes.GZIP
       });
 
-      result.forEach((res) => {
-        console.log('Message sent to topic:', res['topic']);
-        console.log('Message sent to partition:', res.partition);  // Partition info
-        console.log('Offset of the message:', res.offset);  // Offset info
-      });
+    result.forEach((res) => {
+      console.log(`✅ Batch sent to topic: ${res['topic']}`);
+      console.log(`👉 Partition: ${res.partition} | Offset: ${res.offset}`);
+    });
     } catch (error) {
       console.error('Error sending message:', error);
     }

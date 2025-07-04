@@ -6,12 +6,8 @@ import { kafkaTopics } from 'src/services/kafka-topics.config';
 export class MessageService {
     constructor(private readonly producerService:KafkaProducerService){}
 
-    sendMessage(){
-        for(let i=0;i<10;i++){
-            this.producerService.produceMessage(kafkaTopics.topic_1.topic,JSON.stringify({name:"mahi",index:i}))
-        }
-        for(let i=0;i<10;i++){
-            this.producerService.produceMessage(kafkaTopics.topic_2.topic,JSON.stringify({name:"manoj",index:i}))
-        }
+    sendMessage(body){
+            this.producerService.produceMessage("PUNCH",[{"punchType":"BIOMETRIC","punchTime":"2025-06-06 18:00:00"}])
+        
     }
 }
