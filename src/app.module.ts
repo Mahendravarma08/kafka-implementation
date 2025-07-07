@@ -5,8 +5,9 @@ import { KafkaProducerService } from './services/kafka-producer.service';
 import { MessagesModule } from './messages/messages.module';
 import { ConfigModule } from '@nestjs/config';
 import { KafkaModule } from './kafka/kafka.module';
-import { SampleTopicConsumerService } from './services/sampleTopic.service';
 import { sampleConsumerService } from './services/sampleConsumer.service';
+import { PunchConsumerService } from './services/punch-consumer.service';
+import { KafkaAdminService } from './services/kafka-admin.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { sampleConsumerService } from './services/sampleConsumer.service';
     KafkaModule
   ],
   controllers: [AppController],
-  providers: [AppService, KafkaProducerService, SampleTopicConsumerService,sampleConsumerService],
+  providers: [AppService,KafkaAdminService, KafkaProducerService,sampleConsumerService, PunchConsumerService],
 })
 export class AppModule {}

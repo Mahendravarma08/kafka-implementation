@@ -5,8 +5,8 @@ import { CompressionTypes, Kafka, logLevel } from 'kafkajs';
 @Injectable()
 export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   private kafka = new Kafka({
-    clientId: 'singleTopic-Multiple-partitions',
-    brokers: ['localhost:9092'],
+    clientId: 'client-producer',
+    brokers: ['localhost:9093'],
     logLevel: logLevel.ERROR,
   });
 
@@ -28,20 +28,16 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async produceMessage(topicKey: string, data: any[]) {
+  async produceMessage(topicKey: string, data) {
     try {
-      const messages = data.map((data)=>({
-        key: data.id?.toString() || null,
-        value: JSON.stringify(data.message)
-      }))
-
-      console.log(messages)
-
+      console.log(data,"messagessssss")
       const result = await this.producer.send({
         topic:topicKey,
-        messages:messages,
+        messages:data,
         compression: CompressionTypes.GZIP
       });
+
+      console.log(result,"result")
 
     result.forEach((res) => {
       console.log(`✅ Batch sent to topic: ${res['topic']}`);
