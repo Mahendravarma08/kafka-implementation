@@ -5,6 +5,7 @@ import { Kafka, Consumer } from 'kafkajs';
 export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
   private kafka: Kafka;
   private consumer: Consumer;
+  private consumerDuplicate:Consumer
 
   constructor(
     private readonly clientId: string,
@@ -20,6 +21,8 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     await this.connectAndStartConsumer();
+    await this.connectAndStartConsumerDuplicte();
+    
   }
 
   private async connectAndStartConsumer() {
@@ -29,6 +32,14 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     await this.consumer.subscribe({ topic: this.topic, fromBeginning: true });
     console.log(`Subscribed to topic: ${this.topic}`);
     this.runConsumer();
+  }
+  private async connectAndStartConsumerDuplicte() {
+    this.consumerDuplicate = this.kafka.consumer({ groupId: this.groupId });
+    await this.consumerDuplicate.connect();
+    console.log(`consumerDuplicate connected for topic: ${this.topic}`);
+    await this.consumerDuplicate.subscribe({ topic: this.topic, fromBeginning: true });
+    console.log(`Subscribed to topic: ${this.topic}`);
+    this.runConsumerDuplicate()
   }
 
   // Method to process the message, can be customized by child classes
@@ -43,6 +54,15 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
         console.log(
           `Consumer - Topic: ${topic}, Partition: ${partition}, Offset: ${message.offset}, Value: ${message.value?.toString()}`
         );
+        await this.onMessage(message);
+      },
+    });
+  }
+
+  private async runConsumerDuplicate() {
+    await this.consumerDuplicate.run({
+      eachMessage: async ({ topic, partition, message }) => {
+        console.log("From consumer 2")
         await this.onMessage(message);
       },
     });
