@@ -1,12 +1,13 @@
 // src/kafka/kafka.producer.ts
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { CompressionTypes, Kafka, logLevel } from 'kafkajs';
+import { kafkaConfig } from '../config/kafka.config';
 
 @Injectable()
 export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   private kafka = new Kafka({
-    clientId: 'client-producer',
-    brokers: ['localhost:9093'],
+    clientId: kafkaConfig.producer.clientId,
+    brokers: kafkaConfig.producer.brokers,
     logLevel: logLevel.ERROR,
   });
 

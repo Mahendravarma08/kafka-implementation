@@ -10,9 +10,4 @@ export class MessageController {
     async sendMessage(@Body() body){
         this.messageService.sendMessage(body)
     }
-
-    @Post('deleteTopic')
-    async deleteTopic(){
-        this.messageService.deleteTopic()
-    }
 }
